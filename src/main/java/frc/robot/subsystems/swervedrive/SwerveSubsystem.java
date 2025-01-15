@@ -28,6 +28,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -70,11 +72,13 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Enable vision odometry updates while driving.
    */
-  private final boolean             visionDriveTest     = false;
+  private final boolean             visionDriveTest     = true;
   /**
    * PhotonVision class to keep an accurate odometry.
    */
   private       Vision              vision;
+    StructPublisher<Pose2d> publisher;
+
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -96,6 +100,8 @@ public class SwerveSubsystem extends SubsystemBase
     System.out.println("\t\"angle\": {\"factor\": " + angleConversionFactor + " },");
     System.out.println("\t\"drive\": {\"factor\": " + driveConversionFactor + " }");
     System.out.println("}");
+        publisher= NetworkTableInstance.getDefault().getStructTopic("odoEstimatedPos", Pose2d.struct).publish();
+
 
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -154,12 +160,15 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+    System.out.println("a");
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest)
     {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
     }
+    publisher.set(swerveDrive.getPose());
+
   }
 
   @Override
