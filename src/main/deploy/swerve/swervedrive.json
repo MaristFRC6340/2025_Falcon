@@ -7,10 +7,8 @@
   "invertedIMU": false,
   "modules": [
     "frontleft.json",
-
     "frontright.json",
-    "backleft.json"
-,
+    "backleft.json",
     "backright.json"
 
 

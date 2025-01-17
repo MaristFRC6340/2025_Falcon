@@ -56,7 +56,7 @@ public class Vision
    * April Tag Field Layout of the year.
    */
   public static final AprilTagFieldLayout fieldLayout                     = AprilTagFieldLayout.loadField(
-      AprilTagFields.k2024Crescendo);
+      AprilTagFields.k2025Reefscape);
   /**
    * Ambiguity defined as a value between (0,1). Used in {@link Vision#filterPose}.
    */
@@ -145,7 +145,6 @@ public class Vision
                                          pose.timestampSeconds,
                                          camera.curStdDevs);
         publisher.set(pose.estimatedPose.toPose2d() );
-        System.out.println(pose.estimatedPose.toPose2d().toString());
       }
     }
 
