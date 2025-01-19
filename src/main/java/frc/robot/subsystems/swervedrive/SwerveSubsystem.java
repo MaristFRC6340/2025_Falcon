@@ -19,6 +19,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -78,6 +79,9 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private       Vision              vision;
     StructPublisher<Pose2d> publisher;
+
+  private PIDController xPIDController = new PIDController(Constants.DrivebaseConstants.kPX, 0, 0);
+  private PIDController yPIDController = new PIDController(Constants.DrivebaseConstants.kPY, 0, 0);
 
 
   /**
@@ -167,7 +171,6 @@ public class SwerveSubsystem extends SubsystemBase
       vision.updatePoseEstimation(swerveDrive);
     }
     publisher.set(swerveDrive.getPose());
-
   }
 
   @Override
@@ -229,7 +232,7 @@ public class SwerveSubsystem extends SubsystemBase
             //   return alliance.get() == DriverStation.Alliance.Red;
             // }
             // return false;
-            return true;
+            return false;
           },
           this
           // Reference to this subsystem to set requirements
@@ -246,51 +249,9 @@ public class SwerveSubsystem extends SubsystemBase
     PathfindingCommand.warmupCommand().schedule();
   }
 
-  /**
-   * Get the distance to the speaker.
-   *
-   * @return Distance to speaker in meters.
-   */
-  public double getDistanceToSpeaker()
-  {
-    int allianceAprilTag = DriverStation.getAlliance().get() == Alliance.Blue ? 7 : 4;
-    // Taken from PhotonUtils.getDistanceToPose
-    Pose3d speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
-    return getPose().getTranslation().getDistance(speakerAprilTagPose.toPose2d().getTranslation());
-  }
 
-  /**
-   * Get the yaw to aim at the speaker.
-   *
-   * @return {@link Rotation2d} of which you need to achieve.
-   */
-  public Rotation2d getSpeakerYaw()
-  {
-    int allianceAprilTag = DriverStation.getAlliance().get() == Alliance.Blue ? 7 : 4;
-    // Taken from PhotonUtils.getYawToPose()
-    Pose3d        speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
-    Translation2d relativeTrl         = speakerAprilTagPose.toPose2d().relativeTo(getPose()).getTranslation();
-    return new Rotation2d(relativeTrl.getX(), relativeTrl.getY()).plus(swerveDrive.getOdometryHeading());
-  }
 
-  /**
-   * Aim the robot at the speaker.
-   *
-   * @param tolerance Tolerance in degrees.
-   * @return Command to turn the robot to the speaker.
-   */
-  public Command aimAtSpeaker(double tolerance)
-  {
-    SwerveController controller = swerveDrive.getSwerveController();
-    return run(
-        () -> {
-          ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0,
-                                                   controller.headingCalculate(getHeading().getRadians(),
-                                                                               getSpeakerYaw().getRadians()),
-                                                                       getHeading());
-          drive(speeds);
-        }).until(() -> Math.abs(getSpeakerYaw().minus(getHeading()).getDegrees()) < tolerance);
-  }
+
 
   /**
    * Aim the robot at the target returned by PhotonVision.
@@ -800,4 +761,81 @@ public class SwerveSubsystem extends SubsystemBase
   {
     return swerveDrive;
   }
+
+  public int getClosestReefSide () {
+    
+    Translation2d reefRelativePose = new Translation2d(swerveDrive.getPose().getX()-Constants.FieldPositions.BLUE_REEF_CENTER.getX(), swerveDrive.getPose().getY()-Constants.FieldPositions.BLUE_REEF_CENTER.getY());
+    double angleToReef = 90;
+    if(reefRelativePose.getY()!=0)
+    {
+      angleToReef = Math.toDegrees(Math.atan(reefRelativePose.getY()/reefRelativePose.getX()));
+    }
+    System.out.println(angleToReef);
+    //TODO: Replace with checking which side we are on
+    if(true) {
+      //BLUE
+      if(reefRelativePose.getY()>=0) {
+        if(angleToReef>=0 && angleToReef <=30) {
+          return 21;
+        }
+        if(angleToReef>=30 && angleToReef<=90) {
+          return 20;
+        }
+        if(angleToReef<=-30 && angleToReef>=-90) {
+          return 19;
+        }
+        if(angleToReef >=-30 && angleToReef<=0) {
+          return 18;
+        }
+      }
+      else {
+          if(angleToReef>=0 && angleToReef <=30) {
+            return 18;
+          }
+          if(angleToReef>=30 && angleToReef<=90) {
+            return 17;
+          }
+          if(angleToReef<=-30 && angleToReef>=-90) {
+            return 22;
+          }
+          if(angleToReef >=-30 && angleToReef<=0) {
+            return 21;
+          }
+          
+      }
+    }
+    return -1;
+  }
+
+  public Command driveToLeftDeposit(int tagID) {
+    System.out.println("Driving to: LEFT " + tagID);
+    if(tagID==18) {
+      return this.driveToPose(Constants.FieldPositions.TAG_18_DEPOSIT_LEFT);
+    }
+    if(tagID==19) {
+      return this.driveToPose(Constants.FieldPositions.TAG_19_DEPOSIT_LEFT);
+    }
+    if(tagID==20) {
+      return this.driveToPose(Constants.FieldPositions.TAG_20_DEPOSIT_LEFT);
+    }
+
+
+    else return Commands.none();
+  }
+  public Command driveToRightDeposit(int tagID) {
+    System.out.println("Driving to: RIGHT " + tagID);
+    if(tagID==18) {
+      return this.driveToPose(Constants.FieldPositions.TAG_18_DEPOSIT_RIGHT);
+    }
+    if(tagID==19) {
+      return this.driveToPose(Constants.FieldPositions.TAG_19_DEPOSIT_RIGHT);
+    }
+    if(tagID==20) {
+      return this.driveToPose(Constants.FieldPositions.TAG_20_DEPOSIT_RIGHT);
+    }
+
+
+    else return Commands.none();
+  }
 }
+

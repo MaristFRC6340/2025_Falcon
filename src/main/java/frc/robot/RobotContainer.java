@@ -157,17 +157,22 @@ public class RobotContainer
       driverXbox.rightBumper().onTrue(Commands.none());
     } else
     {
-      driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverXbox.x().whileTrue(
+        drivebase.driveToLeftDeposit(drivebase.getClosestReefSide()).alongWith(Commands.runOnce(() -> System.out.println("ID: " + drivebase.getClosestReefSide())))
+      );
       driverXbox.b().whileTrue(
-          drivebase.driveToPose(
-              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
-                              );
-      driverXbox.y().whileTrue(drivebase.aimAtSpeaker(2));
-      driverXbox.start().whileTrue(Commands.none());
-      driverXbox.back().whileTrue(Commands.none());
-      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.rightBumper().onTrue(Commands.none());
+        drivebase.driveToRightDeposit(drivebase.getClosestReefSide())
+      );
+      driverXbox.y().whileTrue(
+        drivebase.driveToPose(
+          Constants.FieldPositions.BLUE_LEFT_CORAL_STATION_PICKUP
+        )
+      );
+      driverXbox.back().whileTrue(
+        Commands.runOnce(() -> System.out.println("Closest Tag: " + drivebase.getClosestReefSide()))
+      );
+
     }
 
     autoChooser = AutoBuilder.buildAutoChooser("default");

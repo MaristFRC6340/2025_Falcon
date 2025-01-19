@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -37,6 +40,8 @@ public final class Constants
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
+    public static final double kPX = 1;
+    public static final double kPY = 1;
   }
 
   public static class OperatorConstants
@@ -47,5 +52,25 @@ public final class Constants
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
+  }
+
+  public static class FieldPositions
+  { 
+    public static final Translation2d BLUE_REEF_CENTER = new Translation2d(4.5, 4);
+    public static final Translation2d RED_REEF_CENTER = new Translation2d(13, 4);
+
+
+    public static final Pose2d BLUE_LEFT_CORAL_STATION_PICKUP = new Pose2d(new Translation2d(1.2, 7.0), Rotation2d.fromDegrees(120));
+
+
+    public static final Pose2d TAG_18_DEPOSIT_LEFT = new Pose2d(new Translation2d(3.2, 4.2), Rotation2d.fromDegrees(90));
+    public static final Pose2d TAG_18_DEPOSIT_RIGHT = new Pose2d(new Translation2d(3.2, 3.8), Rotation2d.fromDegrees(90));
+
+    public static final Pose2d TAG_19_DEPOSIT_LEFT = new Pose2d(new Translation2d(3.8, 5.6), Rotation2d.fromDegrees(30));
+    public static final Pose2d TAG_19_DEPOSIT_RIGHT = new Pose2d(new Translation2d(3.7, 5.1), Rotation2d.fromDegrees(30));
+
+    public static final Pose2d TAG_20_DEPOSIT_LEFT = new Pose2d(new Translation2d(5.3, 5), Rotation2d.fromDegrees(-30));
+    public static final Pose2d TAG_20_DEPOSIT_RIGHT = new Pose2d(new Translation2d(5.0, 5.2), Rotation2d.fromDegrees(-30));
+    
   }
 }
