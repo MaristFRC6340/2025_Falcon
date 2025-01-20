@@ -27,6 +27,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -136,6 +137,8 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.stopOdometryThread();
     }
     setupPathPlanner();
+
+    swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(Constants.DrivebaseConstants.kS, Constants.DrivebaseConstants.kV, Constants.DrivebaseConstants.kA));
   }
 
   /**
@@ -372,14 +375,14 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return SysId Drive Command
    */
-  // public Command sysIdDriveMotorCommand()
-  // {
-  //   return SwerveDriveTest.generateSysIdCommand(
-  //       SwerveDriveTest.setDriveSysIdRoutine(
-  //           new Config(),
-  //           this, swerveDrive, 12),
-  //       3.0, 5.0, 3.0);
-  // }
+  public Command sysIdDriveMotorCommand()
+  {
+    return SwerveDriveTest.generateSysIdCommand(
+        SwerveDriveTest.setDriveSysIdRoutine(
+            new Config(),
+            this, swerveDrive, 12, false),
+        3.0, 5.0, 3.0);
+  }
 
   /**
    * Command to characterize the robot angle motors using SysId
@@ -753,6 +756,25 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   /**
+   * Spins the robot in place to find wheel radius
+   * @param input
+   */
+  public void runWheelRadiusCharacterization(double input) {
+    swerveDrive.drive(new ChassisSpeeds(0, 0, input));
+  }
+
+  public double [] getWheelRadiusCharacterizationPosition() {
+    double [] out = new double [4];
+    SwerveModulePosition [] positions = swerveDrive.getModulePositions();
+    for(int i = 0; i<4; i++) {
+      out[i]=positions[i].distanceMeters/(0.319185814)*(6.28318530718);
+    }
+    return out;
+  }
+
+
+
+  /**
    * Gets the swerve drive object.
    *
    * @return {@link SwerveDrive}
@@ -762,6 +784,10 @@ public class SwerveSubsystem extends SubsystemBase
     return swerveDrive;
   }
 
+  /**
+   * Find the closest reef side to the estimated robot pose
+   * @return
+   */
   public int getClosestReefSide () {
     
     Translation2d reefRelativePose = new Translation2d(swerveDrive.getPose().getX()-Constants.FieldPositions.BLUE_REEF_CENTER.getX(), swerveDrive.getPose().getY()-Constants.FieldPositions.BLUE_REEF_CENTER.getY());

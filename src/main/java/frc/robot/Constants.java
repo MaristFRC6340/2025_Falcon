@@ -42,6 +42,10 @@ public final class Constants
     public static final double WHEEL_LOCK_TIME = 10; // seconds
     public static final double kPX = 1;
     public static final double kPY = 1;
+    public static final double kS = .010838;
+    public static final double kV = 2.3209;
+    public static final double kA = .28083;
+    public static final double DRIVE_RADIUS = .79026; //inches
   }
 
   public static class OperatorConstants
