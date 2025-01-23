@@ -83,7 +83,7 @@ public class SwerveSubsystem extends SubsystemBase
 
   private PIDController xPIDController = new PIDController(Constants.DrivebaseConstants.kPX, 0, 0);
   private PIDController yPIDController = new PIDController(Constants.DrivebaseConstants.kPY, 0, 0);
-
+  private PIDController thetaController = new PIDController(Constants.DrivebaseConstants.kPTheta, 0, 0);
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -174,6 +174,7 @@ public class SwerveSubsystem extends SubsystemBase
       vision.updatePoseEstimation(swerveDrive);
     }
     publisher.set(swerveDrive.getPose());
+    
   }
 
   @Override
@@ -298,7 +299,7 @@ public class SwerveSubsystem extends SubsystemBase
    * @param pose Target {@link Pose2d} to go to.
    * @return PathFinding command
    */
-  public Command driveToPose(Pose2d pose)
+  public Command pathfindToPose(Pose2d pose)
   {
 // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
@@ -312,6 +313,32 @@ public class SwerveSubsystem extends SubsystemBase
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
                                      );
   }
+
+  /**
+   * Drives to a given pose using pid controllers
+   * @param pose Target pose to go to
+   * @return Pathfinding Command
+   */
+  public Command driveToPose(Pose2d pose) {
+      
+      
+      return run(() -> {
+        double xPower = -xPIDController.calculate(pose.getX(), swerveDrive.getPose().getX());
+        double yPower = -yPIDController.calculate(pose.getY(), swerveDrive.getPose().getY());
+        double thetaPower = -thetaController.calculate(pose.getRotation().getRadians(), swerveDrive.getPose().getRotation().getRadians());
+        this.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
+        new ChassisSpeeds(xPower, yPower, thetaPower), getHeading()
+        ));
+      }
+      ).until(() -> {
+          return Math.abs(pose.getX()-swerveDrive.getPose().getX())<=Constants.DrivebaseConstants.TOLERANCE &&
+          Math.abs(pose.getX()-swerveDrive.getPose().getX())<=Constants.DrivebaseConstants.TOLERANCE;
+
+      });
+
+  }
+
+  
 
   /**
    * Drive with {@link SwerveSetpointGenerator} from 254, implemented by PathPlanner.
@@ -834,7 +861,6 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public Command driveToLeftDeposit(int tagID) {
-    System.out.println("Driving to: LEFT " + tagID);
     if(tagID==18) {
       return this.driveToPose(Constants.FieldPositions.TAG_18_DEPOSIT_LEFT);
     }
@@ -849,7 +875,6 @@ public class SwerveSubsystem extends SubsystemBase
     else return Commands.none();
   }
   public Command driveToRightDeposit(int tagID) {
-    System.out.println("Driving to: RIGHT " + tagID);
     if(tagID==18) {
       return this.driveToPose(Constants.FieldPositions.TAG_18_DEPOSIT_RIGHT);
     }

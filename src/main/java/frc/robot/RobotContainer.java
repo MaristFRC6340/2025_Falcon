@@ -160,7 +160,7 @@ public class RobotContainer
     {
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.x().whileTrue(
-        drivebase.driveToLeftDeposit(drivebase.getClosestReefSide()).alongWith(Commands.runOnce(() -> System.out.println("ID: " + drivebase.getClosestReefSide())))
+        drivebase.driveToLeftDeposit(drivebase.getClosestReefSide())
       );
       driverXbox.b().whileTrue(
         drivebase.driveToRightDeposit(drivebase.getClosestReefSide())

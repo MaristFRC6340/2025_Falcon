@@ -92,7 +92,6 @@ public class Vision
     this.currentPose = currentPose;
     this.field2d = field;
     publisher= NetworkTableInstance.getDefault().getStructTopic("visionEstimatedPose", Pose2d.struct).publish();
-
     
   }
 
@@ -135,7 +134,9 @@ public class Vision
                                          pose.timestampSeconds,
                                          camera.curStdDevs);
         publisher.set(pose.estimatedPose.toPose2d() );
+
       }
+      
     }
 
   }

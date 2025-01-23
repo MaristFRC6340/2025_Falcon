@@ -40,12 +40,14 @@ public final class Constants
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
-    public static final double kPX = 1;
-    public static final double kPY = 1;
+    public static final double kPX = .6, kIX = .1;
+    public static final double kPY = .6, kIY = .1;
+    public static final double kPTheta = .6, kITheta = .1;
     public static final double kS = .010838;
     public static final double kV = 2.3209;
     public static final double kA = .28083;
     public static final double DRIVE_RADIUS = .79026; //inches
+    public static final double TOLERANCE = .02;
   }
 
   public static class OperatorConstants
