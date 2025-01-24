@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -35,6 +36,7 @@ public class RobotContainer
 {
   SendableChooser<Command> autoChooser;
 
+  private int closestTag;
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driverXbox = new CommandXboxController(0);
   // The robot's subsystems and commands are defined here...
@@ -159,11 +161,18 @@ public class RobotContainer
     } else
     {
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+
       driverXbox.x().whileTrue(
-        drivebase.driveToLeftDeposit(drivebase.getClosestReefSide())
+        new InstantCommand(
+          () -> {closestTag=drivebase.getClosestReefSide();}).andThen(
+            drivebase.driveToLeftDeposit(closestTag)
+          )
       );
       driverXbox.b().whileTrue(
-        drivebase.driveToRightDeposit(drivebase.getClosestReefSide())
+        new InstantCommand(
+          () -> {closestTag=drivebase.getClosestReefSide();}).andThen(
+            drivebase.driveToRightDeposit(closestTag)
+          )
       );
       driverXbox.y().whileTrue(
         drivebase.driveToPose(

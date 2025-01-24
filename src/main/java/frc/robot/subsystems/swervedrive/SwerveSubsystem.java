@@ -47,6 +47,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -862,13 +863,13 @@ public class SwerveSubsystem extends SubsystemBase
 
   public Command driveToLeftDeposit(int tagID) {
     if(tagID==18) {
-      return this.driveToPose(Constants.FieldPositions.TAG_18_DEPOSIT_LEFT);
+      return this.pathfindToPose(Constants.FieldPositions.TAG_18_DEPOSIT_LEFT);
     }
     if(tagID==19) {
-      return this.driveToPose(Constants.FieldPositions.TAG_19_DEPOSIT_LEFT);
+      return this.pathfindToPose(Constants.FieldPositions.TAG_19_DEPOSIT_LEFT);
     }
     if(tagID==20) {
-      return this.driveToPose(Constants.FieldPositions.TAG_20_DEPOSIT_LEFT);
+      return this.pathfindToPose(Constants.FieldPositions.TAG_20_DEPOSIT_LEFT);
     }
 
 
@@ -876,13 +877,13 @@ public class SwerveSubsystem extends SubsystemBase
   }
   public Command driveToRightDeposit(int tagID) {
     if(tagID==18) {
-      return this.driveToPose(Constants.FieldPositions.TAG_18_DEPOSIT_RIGHT);
+      return this.pathfindToPose(Constants.FieldPositions.TAG_18_DEPOSIT_RIGHT);
     }
     if(tagID==19) {
-      return this.driveToPose(Constants.FieldPositions.TAG_19_DEPOSIT_RIGHT);
+      return this.pathfindToPose(Constants.FieldPositions.TAG_19_DEPOSIT_RIGHT);
     }
     if(tagID==20) {
-      return this.driveToPose(Constants.FieldPositions.TAG_20_DEPOSIT_RIGHT);
+      return this.pathfindToPose(Constants.FieldPositions.TAG_20_DEPOSIT_RIGHT);
     }
 
 
