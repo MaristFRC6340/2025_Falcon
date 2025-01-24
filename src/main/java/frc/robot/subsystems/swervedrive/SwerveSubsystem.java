@@ -37,6 +37,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
@@ -304,8 +306,8 @@ public class SwerveSubsystem extends SubsystemBase
   {
 // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
-        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        swerveDrive.getMaximumChassisVelocity(), 2.0,
+        swerveDrive.getMaximumChassisAngularVelocity()/1.5, Units.degreesToRadians(540));
 
 // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return AutoBuilder.pathfindToPose(
@@ -861,33 +863,51 @@ public class SwerveSubsystem extends SubsystemBase
     return -1;
   }
 
-  public Command driveToLeftDeposit(int tagID) {
-    if(tagID==18) {
-      return this.pathfindToPose(Constants.FieldPositions.TAG_18_DEPOSIT_LEFT);
+  public Pose2d getReefDepositPose(int tagID, boolean left) {
+    if(left) {
+      if(tagID==18) {
+        return Constants.FieldPositions.TAG_18_DEPOSIT_LEFT;
+      }
+      if(tagID==19) {
+        return Constants.FieldPositions.TAG_19_DEPOSIT_LEFT;
+      }
+      if(tagID==20) {
+        return Constants.FieldPositions.TAG_20_DEPOSIT_LEFT;
+      }
     }
-    if(tagID==19) {
-      return this.pathfindToPose(Constants.FieldPositions.TAG_19_DEPOSIT_LEFT);
+    else {
+      if(tagID==18) {
+        return Constants.FieldPositions.TAG_18_DEPOSIT_RIGHT;
+      }
+      if(tagID==19) {
+        return Constants.FieldPositions.TAG_19_DEPOSIT_RIGHT;
+      }
+      if(tagID==20) {
+        return Constants.FieldPositions.TAG_20_DEPOSIT_RIGHT;
+      }
     }
-    if(tagID==20) {
-      return this.pathfindToPose(Constants.FieldPositions.TAG_20_DEPOSIT_LEFT);
-    }
-
-
-    else return Commands.none();
+    return new Pose2d();
   }
-  public Command driveToRightDeposit(int tagID) {
-    if(tagID==18) {
-      return this.pathfindToPose(Constants.FieldPositions.TAG_18_DEPOSIT_RIGHT);
-    }
-    if(tagID==19) {
-      return this.pathfindToPose(Constants.FieldPositions.TAG_19_DEPOSIT_RIGHT);
-    }
-    if(tagID==20) {
-      return this.pathfindToPose(Constants.FieldPositions.TAG_20_DEPOSIT_RIGHT);
-    }
 
+  //If the tolerances are too low, switch to driveToPose insetad of pathfindToPose
+  public Command driveToClosestReefDepositPoseCommand(IntSupplier idSupplier, boolean left) {
+      ConditionalCommand output = new ConditionalCommand(
+        pathfindToPose(getReefDepositPose(18, left)),
+         new PrintCommand("NO VALID TAGID"),
+          () -> idSupplier.getAsInt()==18
+          );
+      
+      output = new ConditionalCommand(
+        pathfindToPose(getReefDepositPose(19, left)),
+        output,
+        () -> idSupplier.getAsInt()==19);
 
-    else return Commands.none();
+      output = new ConditionalCommand(
+        pathfindToPose(getReefDepositPose(20, left)),
+        output,
+        () -> idSupplier.getAsInt()==20);
+
+      return output;
   }
 }
 

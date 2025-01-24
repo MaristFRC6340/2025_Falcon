@@ -25,6 +25,8 @@ import frc.robot.commands.LittletonWheelRadiusCharacterization;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
+
+import swervelib.SwerveDrive;
 import swervelib.SwerveInputStream;
 
 /**
@@ -163,16 +165,10 @@ public class RobotContainer
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
 
       driverXbox.x().whileTrue(
-        new InstantCommand(
-          () -> {closestTag=drivebase.getClosestReefSide();}).andThen(
-            drivebase.driveToLeftDeposit(closestTag)
-          )
+        drivebase.driveToClosestReefDepositPoseCommand(() -> drivebase.getClosestReefSide(), true)
       );
       driverXbox.b().whileTrue(
-        new InstantCommand(
-          () -> {closestTag=drivebase.getClosestReefSide();}).andThen(
-            drivebase.driveToRightDeposit(closestTag)
-          )
+        drivebase.driveToClosestReefDepositPoseCommand(() -> drivebase.getClosestReefSide(), false)
       );
       driverXbox.y().whileTrue(
         drivebase.driveToPose(
