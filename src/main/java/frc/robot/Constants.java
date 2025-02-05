@@ -40,14 +40,14 @@ public final class Constants
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
-    public static final double kPX = .6, kIX = .1;
-    public static final double kPY = .6, kIY = .1;
-    public static final double kPTheta = .6, kITheta = .1;
+    public static final double kPX = 3, kIX = .25;
+    public static final double kPY = 3, kIY = .25;
+    public static final double kPTheta = 2, kIThetwa = .3;
     public static final double kS = .010838;
     public static final double kV = 2.3209;
     public static final double kA = .28083;
     public static final double DRIVE_RADIUS = .79026; //inches
-    public static final double TOLERANCE = .02;
+    public static final double TOLERANCE = .005;
   }
 
   public static class OperatorConstants
@@ -72,7 +72,7 @@ public final class Constants
     public static final Pose2d TAG_18_DEPOSIT_LEFT = new Pose2d(new Translation2d(3.2, 4.2), Rotation2d.fromDegrees(90));
     public static final Pose2d TAG_18_DEPOSIT_RIGHT = new Pose2d(new Translation2d(3.2, 3.8), Rotation2d.fromDegrees(90));
 
-    public static final Pose2d TAG_19_DEPOSIT_LEFT = new Pose2d(new Translation2d(3.8, 5.6), Rotation2d.fromDegrees(30));
+    public static final Pose2d TAG_19_DEPOSIT_LEFT = new Pose2d(new Translation2d(3.3, 4.87), Rotation2d.fromDegrees(30));
     public static final Pose2d TAG_19_DEPOSIT_RIGHT = new Pose2d(new Translation2d(3.7, 5.1), Rotation2d.fromDegrees(30));
 
     public static final Pose2d TAG_20_DEPOSIT_LEFT = new Pose2d(new Translation2d(5.3, 5), Rotation2d.fromDegrees(-30));

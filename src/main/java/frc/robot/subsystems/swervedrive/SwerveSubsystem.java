@@ -141,6 +141,8 @@ public class SwerveSubsystem extends SubsystemBase
     }
     setupPathPlanner();
 
+    xPIDController.setTolerance(0);
+    yPIDController.setTolerance(0);
     swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(Constants.DrivebaseConstants.kS, Constants.DrivebaseConstants.kV, Constants.DrivebaseConstants.kA));
   }
 
@@ -335,7 +337,8 @@ public class SwerveSubsystem extends SubsystemBase
       }
       ).until(() -> {
           return Math.abs(pose.getX()-swerveDrive.getPose().getX())<=Constants.DrivebaseConstants.TOLERANCE &&
-          Math.abs(pose.getX()-swerveDrive.getPose().getX())<=Constants.DrivebaseConstants.TOLERANCE;
+          Math.abs(pose.getX()-swerveDrive.getPose().getX())<=Constants.DrivebaseConstants.TOLERANCE &&
+          Math.abs(pose.getRotation().getDegrees()-swerveDrive.getPose().getRotation().getDegrees())<5;
 
       });
 
@@ -892,22 +895,42 @@ public class SwerveSubsystem extends SubsystemBase
   //If the tolerances are too low, switch to driveToPose insetad of pathfindToPose
   public Command driveToClosestReefDepositPoseCommand(IntSupplier idSupplier, boolean left) {
       ConditionalCommand output = new ConditionalCommand(
-        pathfindToPose(getReefDepositPose(18, left)),
+        driveToPose(getReefDepositPose(18, left)),
          new PrintCommand("NO VALID TAGID"),
           () -> idSupplier.getAsInt()==18
           );
       
       output = new ConditionalCommand(
-        pathfindToPose(getReefDepositPose(19, left)),
+        driveToPose(getReefDepositPose(19, left)),
         output,
         () -> idSupplier.getAsInt()==19);
 
       output = new ConditionalCommand(
-        pathfindToPose(getReefDepositPose(20, left)),
+        driveToPose(getReefDepositPose(20, left)),
         output,
         () -> idSupplier.getAsInt()==20);
 
       return output;
   }
+
+  public Command pathfindToClosestReefDepositPoseCommand(IntSupplier idSupplier, boolean left) {
+    ConditionalCommand output = new ConditionalCommand(
+      pathfindToPose(getReefDepositPose(18, left)),
+       new PrintCommand("NO VALID TAGID"),
+        () -> idSupplier.getAsInt()==18
+        );
+    
+    output = new ConditionalCommand(
+      pathfindToPose(getReefDepositPose(19, left)),
+      output,
+      () -> idSupplier.getAsInt()==19);
+
+    output = new ConditionalCommand(
+      pathfindToPose(getReefDepositPose(20, left)),
+      output,
+      () -> idSupplier.getAsInt()==20);
+
+    return output;
+}
 }
 
