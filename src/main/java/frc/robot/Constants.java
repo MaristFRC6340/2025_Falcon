@@ -72,11 +72,15 @@ public final class Constants
     public static final Pose2d TAG_18_DEPOSIT_LEFT = new Pose2d(new Translation2d(3.2, 4.2), Rotation2d.fromDegrees(90));
     public static final Pose2d TAG_18_DEPOSIT_RIGHT = new Pose2d(new Translation2d(3.2, 3.8), Rotation2d.fromDegrees(90));
 
-    public static final Pose2d TAG_19_DEPOSIT_LEFT = new Pose2d(new Translation2d(3.3, 4.87), Rotation2d.fromDegrees(30));
-    public static final Pose2d TAG_19_DEPOSIT_RIGHT = new Pose2d(new Translation2d(3.7, 5.1), Rotation2d.fromDegrees(30));
+    public static final Pose2d TAG_19_DEPOSIT_RIGHT = new Pose2d(new Translation2d(3.3, 4.87), Rotation2d.fromDegrees(30));
+    public static final Pose2d TAG_19_DEPOSIT_LEFT = new Pose2d(new Translation2d(3.7, 5.1), Rotation2d.fromDegrees(30));
 
     public static final Pose2d TAG_20_DEPOSIT_LEFT = new Pose2d(new Translation2d(5.3, 5), Rotation2d.fromDegrees(-30));
     public static final Pose2d TAG_20_DEPOSIT_RIGHT = new Pose2d(new Translation2d(5.0, 5.2), Rotation2d.fromDegrees(-30));
     
+
+    public static boolean isReef(int id) {
+      return id==7 || id ==8 || id ==9 || id ==10 || id ==11 || id ==17 || id==18 || id==19 || id==20 || id ==21 || id==22;
+    }
   }
 }

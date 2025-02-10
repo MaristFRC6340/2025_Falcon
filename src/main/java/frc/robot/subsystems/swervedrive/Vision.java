@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import java.awt.Desktop;
 import java.util.ArrayList;
@@ -129,6 +130,7 @@ public class Vision
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent())
       {
+        System.out.println("1");
         var pose = poseEst.get();
         swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
                                          pose.timestampSeconds,
@@ -153,6 +155,7 @@ public class Vision
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Cameras camera)
   {
     Optional<EstimatedRobotPose> poseEst = camera.getEstimatedGlobalPose();
+    
     if (Robot.isSimulation())
     {
       Field2d debugField = visionSim.getDebugField();
@@ -350,7 +353,7 @@ public class Vision
     //                              Units.inchesToMeters(7)),
     //            VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
 
-    ARDU_CAM("Arducam",
+    ARDU_CAM("Arducam_B0495_(USB3_2.3MP)",
     new Rotation3d(0,0 , Units.degreesToRadians(-90)),
     new Translation3d(Units.inchesToMeters(2),
     Units.inchesToMeters(-14),
@@ -579,7 +582,7 @@ public class Vision
         var    estStdDevs = singleTagStdDevs;
         int    numTags    = 0;
         double avgDist    = 0;
-
+        boolean reef = false;
         // Precalculation - see how many tags we found, and calculate an average-distance metric
         for (var tgt : targets)
         {
@@ -588,13 +591,18 @@ public class Vision
           {
             continue;
           }
+          double distance = tagPose
+          .get()
+          .toPose2d()
+          .getTranslation()
+          .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
+
+          if(Constants.FieldPositions.isReef(tgt.getFiducialId()) & distance<2) {
+            reef = true;
+          }
           numTags++;
           avgDist +=
-              tagPose
-                  .get()
-                  .toPose2d()
-                  .getTranslation()
-                  .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
+              distance;
         }
 
         if (numTags == 0)
