@@ -42,12 +42,12 @@ public final class Constants
     public static final double WHEEL_LOCK_TIME = 10; // seconds
     public static final double kPX = 3, kIX = .25;
     public static final double kPY = 3, kIY = .25;
-    public static final double kPTheta = 2, kIThetwa = .3;
+    public static final double kPTheta = 4, kIThetwa = .3;
     public static final double kS = .010838;
     public static final double kV = 2.3209;
     public static final double kA = .28083;
     public static final double DRIVE_RADIUS = .79026; //inches
-    public static final double TOLERANCE = .005;
+    public static final double TOLERANCE = 0;
   }
 
   public static class OperatorConstants

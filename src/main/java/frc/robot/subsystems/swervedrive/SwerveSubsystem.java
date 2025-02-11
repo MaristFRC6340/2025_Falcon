@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
@@ -143,6 +144,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     xPIDController.setTolerance(0);
     yPIDController.setTolerance(0);
+    thetaController.setTolerance(0);
     swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(Constants.DrivebaseConstants.kS, Constants.DrivebaseConstants.kV, Constants.DrivebaseConstants.kA));
   }
 
@@ -338,9 +340,9 @@ public class SwerveSubsystem extends SubsystemBase
       ).until(() -> {
           return Math.abs(pose.getX()-swerveDrive.getPose().getX())<=Constants.DrivebaseConstants.TOLERANCE &&
           Math.abs(pose.getX()-swerveDrive.getPose().getX())<=Constants.DrivebaseConstants.TOLERANCE &&
-          Math.abs(pose.getRotation().getDegrees()-swerveDrive.getPose().getRotation().getDegrees())<5;
+          Math.abs(pose.getRotation().getDegrees()-swerveDrive.getPose().getRotation().getDegrees())<10;
 
-      });
+      }).andThen(new InstantCommand(() -> System.out.println("DONE")));
 
   }
 

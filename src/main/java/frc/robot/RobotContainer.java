@@ -10,11 +10,15 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -121,6 +125,9 @@ public class RobotContainer
 
   Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleSim);
 
+
+  public AddressableLED m_led;
+  public AddressableLEDBuffer m_ledBuffer;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -130,6 +137,27 @@ public class RobotContainer
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+
+        m_led = new AddressableLED(9);
+
+      // Reuse buffer
+      // Default to a length of 60, start empty output
+      // Length is expensive to set, so only set it once, then just update data
+      m_ledBuffer = new AddressableLEDBuffer(20);
+      m_led.setLength(m_ledBuffer.getLength());
+
+      // Set the data
+      m_led.setData(m_ledBuffer);
+      m_led.start();
+
+      // Create an LED pattern that sets the entire strip to solid red
+    LEDPattern red = LEDPattern.solid(Color.kRed);
+
+    // Apply the LED pattern to the data buffer
+    red.applyTo(m_ledBuffer);
+
+    // Write the data to the LED strip
+    m_led.setData(m_ledBuffer);
   }
 
   /**

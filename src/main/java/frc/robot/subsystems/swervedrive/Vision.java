@@ -614,12 +614,15 @@ public class Vision
           // One or more tags visible, run the full heuristic.
           avgDist /= numTags;
           // Decrease std devs if multiple targets are visible
-          if (numTags > 1)
+          if(reef) {
+            estStdDevs = VecBuilder.fill(0.05, 0.05, 0.05);
+          }
+          else if (numTags > 1)
           {
             estStdDevs = multiTagStdDevs;
           }
           // Increase std devs based on (average) distance
-          if (numTags == 1 && avgDist > 4)
+          else if (numTags == 1 && avgDist > 4)
           {
             estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
           } else
