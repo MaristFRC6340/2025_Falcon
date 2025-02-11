@@ -22,11 +22,14 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.LEDReefPoseCommand;
 import frc.robot.commands.LittletonWheelRadiusCharacterization;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 
@@ -47,8 +50,9 @@ public class RobotContainer
   final         CommandXboxController driverXbox = new CommandXboxController(0);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-                                                                                "swerve"));
-  // Applies deadbands and inverts controls because joysticks
+                                                                          "swerve"));
+  
+  private final LEDSubsystem leds = new LEDSubsystem();                                                                        // Applies deadbands and inverts controls because joysticks
   // are back-right positive while robot
   // controls are front-left positive
   // left stick controls translation
@@ -126,8 +130,7 @@ public class RobotContainer
   Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleSim);
 
 
-  public AddressableLED m_led;
-  public AddressableLEDBuffer m_ledBuffer;
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -138,26 +141,7 @@ public class RobotContainer
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
 
-        m_led = new AddressableLED(9);
-
-      // Reuse buffer
-      // Default to a length of 60, start empty output
-      // Length is expensive to set, so only set it once, then just update data
-      m_ledBuffer = new AddressableLEDBuffer(20);
-      m_led.setLength(m_ledBuffer.getLength());
-
-      // Set the data
-      m_led.setData(m_ledBuffer);
-      m_led.start();
-
-      // Create an LED pattern that sets the entire strip to solid red
-    LEDPattern red = LEDPattern.solid(Color.kRed);
-
-    // Apply the LED pattern to the data buffer
-    red.applyTo(m_ledBuffer);
-
-    // Write the data to the LED strip
-    m_led.setData(m_ledBuffer);
+       
   }
 
   /**
@@ -207,6 +191,10 @@ public class RobotContainer
       driverXbox.back().whileTrue(
         Commands.runOnce(() -> System.out.println("Closest Tag: " + drivebase.getClosestReefSide()))
       );
+      // new Trigger(()->new Translation2d(drivebase.getPose().getX()-Constants.FieldPositions.BLUE_REEF_CENTER.getX(), drivebase.getPose().getY()-Constants.FieldPositions.BLUE_REEF_CENTER.getY()).getNorm() <2).whileTrue(new RepeatCommand(
+      //    new LEDReefPoseCommand(drivebase, leds)));
+
+
 
     }
 

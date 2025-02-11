@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import java.util.Arrays;
+import java.util.List;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -78,6 +81,7 @@ public final class Constants
     public static final Pose2d TAG_20_DEPOSIT_LEFT = new Pose2d(new Translation2d(5.3, 5), Rotation2d.fromDegrees(-30));
     public static final Pose2d TAG_20_DEPOSIT_RIGHT = new Pose2d(new Translation2d(5.0, 5.2), Rotation2d.fromDegrees(-30));
     
+    public static final List<Pose2d> kReefPositions = Arrays.asList(TAG_18_DEPOSIT_LEFT, TAG_18_DEPOSIT_RIGHT, TAG_19_DEPOSIT_LEFT, TAG_19_DEPOSIT_RIGHT, TAG_20_DEPOSIT_LEFT, TAG_20_DEPOSIT_RIGHT);
 
     public static boolean isReef(int id) {
       return id==7 || id ==8 || id ==9 || id ==10 || id ==11 || id ==17 || id==18 || id==19 || id==20 || id ==21 || id==22;
